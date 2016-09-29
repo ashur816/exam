@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lydia.dao.mapper.UserMapper">
+
+    <select id="getUserById" resultType="com.lydia.dto.UserResult">
+        SELECT USER_NAME,USER_TYPE,FULLNAME,GRADUATE_INSTITUTION,MAJOR FROM USER_INFO WHERE USER_ID=#{userId};
+    </select>
+
+    <select id="getUserList" resultType="com.lydia.dto.UserResult">
+        SELECT u.user_id,u.user_name,u.user_type,u.password,
+        u.fullname,u.age,u.sex,u.graduate_institution,u.major,u.working_life,u.user_level,
+        g.total_goal,g.start_time,g.end_time,g.exam_marker
+        FROM USER_INFO u
+        LEFT JOIN USER_GOAL g
+        ON u.user_id = g.user_id WHERE u.USER_TYPE=2
+        <if test="userId != 0">
+            AND u.user_id = #{userId};
+        </if>;
+    </select>
+
+    <select id="getUser" resultType="com.lydia.po.User">
+        SELECT USER_ID,USER_NAME,USER_TYPE,PASSWORD,FULLNAME,GRADUATE_INSTITUTION,MAJOR FROM USER_INFO WHERE USER_NAME=#{userName} AND PASSWORD=#{password};
+    </select>
+
+    <insert id="register" parameterType="com.lydia.dto.UserRegister">
+        INSERT INTO user_info(user_name,user_type,password,fullname,age,sex,graduate_institution,major,working_life,user_level)
+        VALUES (#{userName},#{userType},#{password},#{fullname},#{age},#{sex},#{graduateInstitution},#{major},#{workingLife},#{userLevel});
+    </insert>
+
+    <update id="updateUser">
+        UPDATE user_info SET user_name=#{userName},password=#{password},fullname=#{fullname},age=#{age},sex=#{sex},graduate_institution=#{graduateInstitution},major=#{major},working_life=#{workingLife},user_level=#{userLevel}
+        WHERE user_id=#{userId};
+    </update>
+
+    <delete id="deleteUser">
+        DELETE FROM user_info WHERE user_id=#{userId};
+    </delete>
+
+    <select id="singleUser" resultType="com.lydia.po.User">
+        SELECT USER_ID,USER_NAME,PASSWORD FROM USER_INFO WHERE USER_NAME=#{userName};
+    </select>
+
+    <select id="getLatestUserGoal" resultType="com.lydia.po.UserGoal">
+        SELECT GOAL_ID,TOTAL_GOAL,USER_ID,START_TIME,END_TIME,EXAM_FLAG,REEXAM_FLAG FROM user_goal WHERE user_id=#{userId} order by GOAL_ID desc limit 1;
+    </select>
+
+    <insert id="updateUserGoal">
+        UPDATE user_goal SET total_goal=#{totalGoal},exam_marker=#{examMaker} WHERE user_id=#{userId};
+    </insert>
+
+    <insert id="insertUserGoal">
+        INSERT INTO user_goal(user_id,total_goal,start_time,exam_flag,reexam_flag)VALUES(#{userId},0,#{startDate},0,0);
+    </insert>
+
+    <update id="commit">
+        UPDATE user_goal SET end_time=#{endDate} WHERE user_id=#{userId};
+    </update>
+
+</mapper>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lydia.dao.mapper.ExaminationMapper">
+
+    <delete id="deleteExam">
+        DELETE FROM examination WHERE examination_id=#{examId};
+    </delete>
+    <update id="updateExam">
+        UPDATE examination SET examination_question=#{examQuestion},examination_score=#{examScore},
+        reference_answer=#{referenceAnswer},examination_level=#{examLevel} WHERE examination_id=#{examId};
+    </update>
+    <insert id="insertExam">
+        INSERT INTO examination(examination_id,examination_question,examination_score,reference_answer,examination_level)
+        VALUES (#{examId},#{examQuestion},#{examScore},#{referenceAnswer},#{examLevel});
+    </insert>
+    <select id="getExamAndAnswer" resultType="com.lydia.dto.UserAnswer">
+       SELECT
+          e.examination_id,
+          e.examination_question,
+          e.examination_score,
+          e.examination_level,
+          a.answer_id,
+          a.answer_content,
+          a.goal
+      FROM examination e
+        LEFT JOIN (SELECT *
+          FROM answer
+          WHERE user_id = #{userId}) a
+          ON e.examination_id = a.examination_id
+        WHERE e.examination_id = #{examId};
+    </select>
+    <select id="allExamId" resultType="java.lang.Integer">
+        SELECT examination_id FROM examination;
+    </select>
+
+    <select id="getExamIdList" resultType="java.lang.Integer">
+        SELECT e.examination_id FROM examination e
+        LEFT JOIN user_info u
+        ON e.examination_level=u.user_level
+        WHERE u.user_id=#{userId};
+    </select>
+    <select id="getExamList" resultType="com.lydia.po.Examination">
+        SELECT examination_id,examination_question,examination_score,reference_answer,examination_level FROM examination
+        <if test="examLevel != 0">
+            WHERE examination_level = #{examLevel}
+        </if>
+    </select>
+    <select id="getExamInfo" resultType="com.lydia.po.Examination">
+        SELECT examination_id,examination_question,examination_score,reference_answer,examination_level FROM examination WHERE examination_id = #{examId}
+    </select>
+
+</mapper>
