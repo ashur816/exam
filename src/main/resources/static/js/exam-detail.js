@@ -40,7 +40,7 @@ $(function () {
                     $("#referenceAnswer").html("参考答案： " + Message.referenceAnswer);
                     $("#answerContent").removeClass("hidden");
                     $("#divGrade").removeClass("hidden");
-                    $("#goal").val(Message.goal == null ? 0 : Message.goal);
+                    $("#goal").val(Message.goal == null ? 0 : Message.goal).attr("max", examinationScore);
                     if (Message.answerContent == null) {
                         CKEDITOR.instances.yourAnswer.setData("");
                     } else {

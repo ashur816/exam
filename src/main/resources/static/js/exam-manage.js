@@ -1,5 +1,8 @@
 $(document).ready(function () {
-
+    CKEDITOR.replace('examinationQuestion', {
+        height : 100,
+        width : 610
+    });
     var t = $("#table-list").dataTable({
         "bFilter": false, //过滤功能
         "aoColumnDefs": [
@@ -107,6 +110,24 @@ $(document).ready(function () {
     });
 
     /*************************************显示新增页面*******************************/
+    $('#exam-form-modal').on('show.bs.modal', function (e) {
+        $(this).css({
+            'left': function () {
+                var modalWidth = $(this).width();
+                var winWidth = $(window).width();
+                var left = 0;
+                if(winWidth > modalWidth){
+                    left = (winWidth - modalWidth)/2 + 250;
+                }
+                else {
+                    $(this).width(winWidth);
+                    left = 250;
+                }
+                return left;
+            }
+        });
+    });
+
     $("#btnAdd").click(function () {
         restForm();
         $("#exam-form-modal").modal("show");

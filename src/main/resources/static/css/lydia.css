@@ -48,6 +48,21 @@
     margin-top: 5px;
 }
 
+.modal-dialog{
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.modal_wapper{
+
+    display: table;
+
+    height: 100%;
+
+    margin: 0px auto
+
+}
+
 .bg-body {
     background: #65cea7 url("../images/login-bg.jpg") no-repeat fixed;
     background-size: cover;
