@@ -1,8 +1,15 @@
 $(document).ready(function () {
-    CKEDITOR.replace('examinationQuestion', {
-        height : 100,
-        width : 610
+    var mWidth = $('#exam-form-modal').width;
+    CKEDITOR.replace('question', {
+        height: 100,
+        width: mWidth * 8 / 12
     });
+
+    CKEDITOR.replace('rAnswer', {
+        height: 100,
+        width: mWidth * 8 / 12
+    });
+
     var t = $("#table-list").dataTable({
         "bFilter": false, //过滤功能
         "aoColumnDefs": [
@@ -116,8 +123,8 @@ $(document).ready(function () {
                 var modalWidth = $(this).width();
                 var winWidth = $(window).width();
                 var left = 0;
-                if(winWidth > modalWidth){
-                    left = (winWidth - modalWidth)/2 + 250;
+                if (winWidth > modalWidth) {
+                    left = (winWidth - modalWidth) / 2 + 250;
                 }
                 else {
                     $(this).width(winWidth);
@@ -130,12 +137,14 @@ $(document).ready(function () {
 
     $("#btnAdd").click(function () {
         restForm();
+        $("#myModalLabel").text("添加试题");
         $("#exam-form-modal").modal("show");
     });
 
     /*************************************显示修改页面*******************************/
     $('#table-list').on('click', 'button#editrow', function () {
         restForm();
+        $("#myModalLabel").text("修改试题");
         var data = t.api().row($(this).parents('tr')).data(); //获取点击行的数据
         var examinationId = data["examinationId"];
         /*显示信息*/
@@ -148,6 +157,7 @@ $(document).ready(function () {
                 }
                 else {
                     setDataToForm("form-exam", response);
+                    CKEDITOR.instances.question.setData(response.examinationQuestion);
                     $("#exam-form-modal").modal("show");
                 }
             },
@@ -159,12 +169,18 @@ $(document).ready(function () {
 
     /*************************************新增 & 修改 提交数据*******************************/
     $("#btnSave").click(function () {
-        var data = $("#form-exam").serialize();
         var examinationId = $("#form-exam [name=examinationId]").val();
         var postUrl = baseUrl + "/insertExam?token=" + token;
         if (examinationId != null && examinationId != "") {
             postUrl = baseUrl + "/updateExam?token=" + token;
         }
+        var eQuestion = CKEDITOR.instances.question.getData();
+        if (eQuestion == "") {
+            $("#divQ")[0].innerHTML = '<span class="Validform_checktip Validform_wrong">答案不能为空</span>';
+            return;
+        }
+        $("#form-exam [name=examinationQuestion]").val();
+        $("#form-exam [name=referenceAnswer]").val(CKEDITOR.instances.rAnswer.getData());
         validator.submitForm(false, postUrl);
     });
 
